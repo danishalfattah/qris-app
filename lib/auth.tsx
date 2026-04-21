@@ -1,28 +1,34 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import type { User } from "./types";
-import { MOCK_USERS } from "./mock-data";
+import * as api from "./api";
+
+interface AuthSession {
+  token: string;
+  account_id: string;
+  balance: number;
+}
 
 interface AuthContextType {
-  user: User | null;
+  session: AuthSession | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<{ success: boolean; message: string }>;
+  login: (username: string, password: string) => Promise<{ success: boolean; message: string }>;
+  register: (username: string, password: string, initial_balance: number) => Promise<{ success: boolean; message: string }>;
   logout: () => void;
+  updateBalance: (newBalance: number) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<AuthSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check localStorage for existing session
     const stored = localStorage.getItem("qris_user");
     if (stored) {
       try {
-        setUser(JSON.parse(stored));
+        setSession(JSON.parse(stored));
       } catch {
         localStorage.removeItem("qris_user");
       }
@@ -30,30 +36,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string) => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    const found = MOCK_USERS.find(
-      (u) => u.email === email && u.password === password
-    );
-
-    if (found) {
-      setUser(found.user);
-      localStorage.setItem("qris_user", JSON.stringify(found.user));
+  const login = async (username: string, password: string) => {
+    try {
+      const data = await api.login(username, password);
+      setSession(data);
+      localStorage.setItem("qris_user", JSON.stringify(data));
       return { success: true, message: "Login berhasil" };
+    } catch (err) {
+      return { success: false, message: err instanceof Error ? err.message : "Login gagal" };
     }
+  };
 
-    return { success: false, message: "Email atau password salah" };
+  const register = async (username: string, password: string, initial_balance: number) => {
+    try {
+      const data = await api.register(username, password, initial_balance);
+      setSession(data);
+      localStorage.setItem("qris_user", JSON.stringify(data));
+      return { success: true, message: "Registrasi berhasil" };
+    } catch (err) {
+      return { success: false, message: err instanceof Error ? err.message : "Registrasi gagal" };
+    }
   };
 
   const logout = () => {
-    setUser(null);
+    setSession(null);
     localStorage.removeItem("qris_user");
   };
 
+  const updateBalance = (newBalance: number) => {
+    if (!session) return;
+    const updated = { ...session, balance: newBalance };
+    setSession(updated);
+    localStorage.setItem("qris_user", JSON.stringify(updated));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ session, isLoading, login, register, logout, updateBalance }}>
       {children}
     </AuthContext.Provider>
   );
