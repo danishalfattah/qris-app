@@ -2,14 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, ScanLine, History, Wallet, User } from "lucide-react";
+import { Home, ScanLine, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/", icon: Home, label: "Home" },
-  { href: "/history", icon: History, label: "Riwayat" },
   { href: "/scan", icon: ScanLine, label: "Scan QR", isCenter: true },
-  { href: "/balance", icon: Wallet, label: "Saldo" },
   { href: "/profile", icon: User, label: "Profil" },
 ];
 
