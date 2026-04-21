@@ -1,0 +1,104 @@
+<h2>Desain Perubahan — QRIS UI → API Spec</h2>
+<p class="subtitle">Ringkasan lengkap semua perubahan yang akan dilakukan</p>
+
+<div class="section">
+  <h3>1. File Baru & Yang Dimodifikasi</h3>
+  <div class="mockup">
+    <div class="mockup-header">Struktur File</div>
+    <div class="mockup-body" style="font-family:monospace;font-size:0.85rem;line-height:2">
+      <div style="color:#4ade80">+ lib/api.ts <span style="color:#9ca3af;font-family:sans-serif;font-size:0.8rem">← BARU: semua API call terpusat</span></div>
+      <div style="color:#fbbf24">~ lib/auth.tsx <span style="color:#9ca3af;font-family:sans-serif;font-size:0.8rem">← MODIFIKASI: pakai api.ts, simpan token + balance</span></div>
+      <div style="color:#fbbf24">~ lib/types.ts <span style="color:#9ca3af;font-family:sans-serif;font-size:0.8rem">← MODIFIKASI: sesuaikan dengan response API spec</span></div>
+      <div style="color:#f87171">- lib/mock-data.ts <span style="color:#9ca3af;font-family:sans-serif;font-size:0.8rem">← HAPUS: tidak diperlukan lagi</span></div>
+      <div style="color:#4ade80">+ app/register/page.tsx <span style="color:#9ca3af;font-family:sans-serif;font-size:0.8rem">← BARU: halaman register</span></div>
+      <div style="color:#fbbf24">~ app/login/page.tsx <span style="color:#9ca3af;font-family:sans-serif;font-size:0.8rem">← MODIFIKASI: email → username, link ke register</span></div>
+      <div style="color:#fbbf24">~ app/scan/result/page.tsx <span style="color:#9ca3af;font-family:sans-serif;font-size:0.8rem">← MODIFIKASI: inquiry + payment + polling status</span></div>
+      <div style="color:#fbbf24">~ app/profile/page.tsx <span style="color:#9ca3af;font-family:sans-serif;font-size:0.8rem">← MODIFIKASI: tampilkan account_id + balance saja</span></div>
+      <div style="color:#fbbf24">~ app/page.tsx <span style="color:#9ca3af;font-family:sans-serif;font-size:0.8rem">← MODIFIKASI: balance dari context, hapus transaksi mock</span></div>
+      <div style="color:#f87171">- app/history/ <span style="color:#9ca3af;font-family:sans-serif;font-size:0.8rem">← HAPUS: tidak ada endpoint user history</span></div>
+      <div style="color:#f87171">- app/balance/ <span style="color:#9ca3af;font-family:sans-serif;font-size:0.8rem">← HAPUS: tidak ada endpoint balance</span></div>
+      <div style="color:#f87171">- app/e-statement/ <span style="color:#9ca3af;font-family:sans-serif;font-size:0.8rem">← HAPUS: bergantung pada mock data</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>2. lib/api.ts — Fungsi API</h3>
+  <div class="mockup">
+    <div class="mockup-header">Fungsi yang akan ada di lib/api.ts</div>
+    <div class="mockup-body" style="font-family:monospace;font-size:0.85rem;line-height:1.9">
+      <div><span style="color:#60a5fa">login</span>(username, password) → POST /api/auth/login</div>
+      <div><span style="color:#60a5fa">register</span>(username, password, initial_balance) → POST /api/auth/register</div>
+      <div><span style="color:#60a5fa">inquiryByPayload</span>(qris_payload, token) → GET /api/qris/inquiry/{payload}</div>
+      <div><span style="color:#60a5fa">inquiryByImage</span>(imageFile, token) → POST /api/qris/inquiry/image</div>
+      <div><span style="color:#60a5fa">createPayment</span>(inquiry_id, amount, pincode, token) → POST /api/qris/payment</div>
+      <div><span style="color:#60a5fa">getTransactionStatus</span>(transaction_id, token) → GET /api/qris/status/{id}</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>3. Perubahan Flow Scan & Bayar</h3>
+  <div class="mockup">
+    <div class="mockup-header">Flow Baru di app/scan/result/page.tsx</div>
+    <div class="mockup-body" style="font-size:0.85rem;line-height:1.9">
+      <div>① Scan QR (kamera) → decode payload → <code>inquiryByPayload(payload)</code></div>
+      <div>② Atau: upload gambar → <code>inquiryByImage(file)</code></div>
+      <div>③ Tampilkan: merchant_name, city, terminal_id, fixed_amount (atau input jika 0)</div>
+      <div>④ User input PIN 6 digit → <code>createPayment(inquiry_id, amount, pincode)</code></div>
+      <div>⑤ Response 202 → dapat transaction_id → mulai polling</div>
+      <div>⑥ Polling <code>getTransactionStatus(transaction_id)</code> tiap 2 detik</div>
+      <div>⑦ Status SUCCESS/FAILED → tampilkan result, update balance di context</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>4. Perubahan Auth Context</h3>
+  <div class="mockup">
+    <div class="mockup-header">lib/auth.tsx — State yang disimpan</div>
+    <div class="mockup-body" style="font-family:monospace;font-size:0.85rem;line-height:1.9">
+      <div>token: string <span style="color:#9ca3af">// JWT untuk semua request</span></div>
+      <div>account_id: string <span style="color:#9ca3af">// dari login/register response</span></div>
+      <div>balance: number <span style="color:#9ca3af">// di-update setelah transaksi sukses</span></div>
+      <div>updateBalance(newBalance) <span style="color:#9ca3af">// dipanggil dari scan/result setelah polling</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>5. Halaman Baru: /register</h3>
+  <div class="mockup">
+    <div class="mockup-header">Form Register</div>
+    <div class="mockup-body" style="font-size:0.85rem;line-height:1.9">
+      <div>• Field: username (alphanumeric), password (min 8), initial_balance (≥ 0)</div>
+      <div>• Pada sukses: langsung login otomatis (token sudah ada di response)</div>
+      <div>• Redirect ke home setelah register</div>
+      <div>• Link "Sudah punya akun? Login" → /login</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>6. Halaman yang Dihapus</h3>
+  <table style="width:100%;border-collapse:collapse;font-size:0.85rem">
+    <tr style="background:#1f2937;color:#f9fafb">
+      <th style="padding:8px;text-align:left">Halaman</th>
+      <th style="padding:8px;text-align:left">Alasan Dihapus</th>
+    </tr>
+    <tr style="border-bottom:1px solid #374151">
+      <td style="padding:8px"><code>/history</code></td>
+      <td style="padding:8px">Tidak ada user-facing transaction history endpoint</td>
+    </tr>
+    <tr style="border-bottom:1px solid #374151">
+      <td style="padding:8px"><code>/balance</code></td>
+      <td style="padding:8px">Tidak ada dedicated balance endpoint</td>
+    </tr>
+    <tr>
+      <td style="padding:8px"><code>/e-statement</code></td>
+      <td style="padding:8px">Bergantung sepenuhnya pada mock data, tidak ada API pendukung</td>
+    </tr>
+  </table>
+</div>
+
+<p class="subtitle" style="margin-top:1.5rem">Apakah desain ini sudah sesuai? Konfirmasi di terminal untuk lanjut ke penulisan spec.</p>
