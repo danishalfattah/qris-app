@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import AppShell from "@/components/AppShell";
@@ -9,9 +9,10 @@ import { X, Info, Flashlight, Image, QrCode } from "lucide-react";
 
 export default function ScanPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { session } = useAuth();
   const [flashOn, setFlashOn] = useState(false);
   const [scanError, setScanError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleScanSuccess = useCallback(
     (decodedText: string) => {
@@ -26,7 +27,7 @@ export default function ScanPage() {
     setScanError(error);
   }, []);
 
-  if (!user) return null;
+  if (!session) return null;
 
   return (
     <AppShell showNav={false}>
@@ -123,12 +124,30 @@ export default function ScanPage() {
               <span className="text-white/90 text-[10px] font-medium">QRIS</span>
             </div>
 
-            <button className="flex flex-col items-center gap-1.5">
-              <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
-                <Image className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-white/70 text-[10px]">Gallery</span>
-            </button>
+            <>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const objectUrl = URL.createObjectURL(file);
+                    router.push(`/scan/result?image=${encodeURIComponent(objectUrl)}`);
+                  }
+                }}
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="flex flex-col items-center gap-1.5"
+              >
+                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
+                  <Image className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-white/70 text-[10px]">Gallery</span>
+              </button>
+            </>
           </div>
 
           <p className="text-white/40 text-[10px] text-center">
