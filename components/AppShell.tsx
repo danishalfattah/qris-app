@@ -13,17 +13,17 @@ interface AppShellProps {
 }
 
 export default function AppShell({ children, showNav = true }: AppShellProps) {
-  const { user, isLoading } = useAuth();
+  const { session, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && !user) {
+    if (!isLoading && !session) {
       router.replace("/login");
     }
-  }, [user, isLoading, router]);
+  }, [session, isLoading, router]);
 
   // Show loading spinner while checking auth state
-  if (isLoading || !user) {
+  if (isLoading || !session) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <LoadingSpinner size="lg" text="Memuat..." />
