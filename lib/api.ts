@@ -7,6 +7,12 @@ import type {
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+const DEMO_ACCOUNT: AuthResponse = {
+  token: "mock-jwt-token-demo",
+  account_id: "ACC-DEMO",
+  balance: 2500000,
+};
+
 export async function login(
   username: string,
   password: string
@@ -14,6 +20,9 @@ export async function login(
   await delay(80);
   if (!username || !password) {
     throw new Error("Username dan password wajib diisi");
+  }
+  if (username === "demo" && password === "demo1234") {
+    return DEMO_ACCOUNT;
   }
   return {
     token: "mock-jwt-token-" + username,

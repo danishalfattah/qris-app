@@ -131,6 +131,19 @@ export default function LoginPage() {
           </form>
         </div>
 
+        {/* Demo credentials hint */}
+        <button
+          type="button"
+          onClick={() => { setUsername("demo"); setPassword("demo1234"); }}
+          className="w-full mt-3 bg-octo-gray-50 border border-octo-gray-200 rounded-xl px-4 py-3 text-left hover:bg-octo-gray-100 transition-colors fade-in"
+        >
+          <p className="text-xs font-semibold text-octo-gray-500 mb-1">Akun Demo</p>
+          <p className="text-xs text-octo-gray-400 font-mono">
+            username: <span className="text-octo-gray-700">demo</span> &nbsp;|&nbsp; password: <span className="text-octo-gray-700">demo1234</span>
+          </p>
+          <p className="text-[10px] text-octo-gray-400 mt-1">Tap untuk isi otomatis</p>
+        </button>
+
         <div className="mt-4 text-center fade-in">
           <p className="text-sm text-octo-gray-500">
             Belum punya akun?{" "}
