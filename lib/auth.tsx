@@ -28,7 +28,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const stored = localStorage.getItem("qris_user");
     if (stored) {
       try {
-        setSession(JSON.parse(stored));
+        const parsed = JSON.parse(stored);
+        if (parsed?.token && parsed?.account_id && typeof parsed?.balance === "number") {
+          setSession(parsed);
+        } else {
+          localStorage.removeItem("qris_user");
+        }
       } catch {
         localStorage.removeItem("qris_user");
       }

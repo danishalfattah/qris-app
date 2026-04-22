@@ -10,7 +10,7 @@ export default function ProfilePage() {
   const { session, logout } = useAuth();
   const router = useRouter();
 
-  if (!session) return null;
+  if (!session || !session.account_id) return null;
 
   const handleLogout = () => {
     logout();
