@@ -147,6 +147,13 @@
   }
 }
 
+/* Mobile: match body to mobile-shell so blue doesn't bleed through */
+@media (max-width: 430px) {
+  body {
+    background: var(--background);
+  }
+}
+
 /* ============ OCTO Header Gradient ============ */
 .octo-gradient {
   background: linear-gradient(135deg, #C62828 0%, #B71C1C 40%, #8B0000 100%);
