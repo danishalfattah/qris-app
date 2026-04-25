@@ -12,6 +12,15 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "QRIS Pay - Mobile Payment",
   description: "Scan & Pay dengan QRIS - Pembayaran digital cepat dan aman",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "QRIS Pay",
+  },
+  icons: {
+    apple: "/icons/apple-touch-icon.png",
+  },
 };
 
 export const viewport: Viewport = {
