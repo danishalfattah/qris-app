@@ -153,7 +153,7 @@ export default function RegisterPage() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-12 rounded-xl bg-gradient-to-r from-octo-red-600 to-octo-red-800 hover:from-octo-red-700 hover:to-octo-red text-white font-semibold text-sm shadow-lg shadow-octo-red/25 transition-all duration-200 active:scale-[0.98]"
+              className="w-full h-12 rounded-xl bg-linear-to-r from-octo-red-600 to-octo-red-800 hover:from-octo-red-700 hover:to-octo-red text-white font-semibold text-sm shadow-lg shadow-octo-red/25 transition-all duration-200 active:scale-[0.98]"
             >
               {isSubmitting ? (
                 <>

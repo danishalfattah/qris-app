@@ -20,7 +20,6 @@ import {
   Loader2,
   Receipt,
   Home,
-  Terminal,
 } from "lucide-react";
 
 function ScanResultContent() {
@@ -30,12 +29,15 @@ function ScanResultContent() {
   const qrData = searchParams.get("qr") || "";
   const imageParam = searchParams.get("image");
 
-  const [stage, setStage] = useState<"inquiry" | "confirm" | "processing" | "result">("inquiry");
+  const [stage, setStage] = useState<
+    "inquiry" | "confirm" | "processing" | "result"
+  >("inquiry");
   const [inquiry, setInquiry] = useState<InquiryResponse | null>(null);
   const [inquiryError, setInquiryError] = useState("");
   const [amount, setAmount] = useState("");
   const [pin, setPin] = useState("");
-  const [paymentStatus, setPaymentStatus] = useState<TransactionStatusResponse | null>(null);
+  const [paymentStatus, setPaymentStatus] =
+    useState<TransactionStatusResponse | null>(null);
   const [paymentError, setPaymentError] = useState("");
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -56,7 +58,9 @@ function ScanResultContent() {
         }
         setInquiry(result);
       } catch (err) {
-        setInquiryError(err instanceof Error ? err.message : "Gagal memproses QR");
+        setInquiryError(
+          err instanceof Error ? err.message : "Gagal memproses QR",
+        );
       }
     }
 
@@ -86,7 +90,10 @@ function ScanResultContent() {
         <div className="px-5 py-10 text-center">
           <XCircle className="w-14 h-14 text-red-400 mx-auto mb-3" />
           <p className="text-octo-gray-700 font-medium">{inquiryError}</p>
-          <Button onClick={() => router.back()} className="mt-5 rounded-xl bg-octo-red text-white">
+          <Button
+            onClick={() => router.back()}
+            className="mt-5 rounded-xl bg-octo-red text-white"
+          >
             Kembali
           </Button>
         </div>
@@ -104,7 +111,8 @@ function ScanResultContent() {
     );
   }
 
-  const finalAmount = inquiry.fixed_amount > 0 ? inquiry.fixed_amount : parseInt(amount) || 0;
+  const finalAmount =
+    inquiry.fixed_amount > 0 ? inquiry.fixed_amount : parseInt(amount) || 0;
 
   const handleConfirm = () => setStage("confirm");
 
@@ -113,7 +121,12 @@ function ScanResultContent() {
     setPaymentError("");
 
     try {
-      const payment = await api.createPayment(inquiry.inquiry_id, finalAmount, pin, session.token);
+      const payment = await api.createPayment(
+        inquiry.inquiry_id,
+        finalAmount,
+        pin,
+        session.token,
+      );
       const transactionId = payment.transaction_id;
 
       let pollCount = 0;
@@ -122,7 +135,10 @@ function ScanResultContent() {
       pollingRef.current = setInterval(async () => {
         pollCount++;
         try {
-          const status = await api.getTransactionStatus(transactionId, session.token);
+          const status = await api.getTransactionStatus(
+            transactionId,
+            session.token,
+          );
           if (status.status !== "PENDING") {
             if (pollingRef.current) clearInterval(pollingRef.current);
             if (status.status === "SUCCESS") {
@@ -165,7 +181,9 @@ function ScanResultContent() {
                 </h2>
                 <div className="flex items-center gap-1 mt-0.5">
                   <MapPin className="w-3 h-3 text-octo-gray-400" />
-                  <span className="text-xs text-octo-gray-500">{inquiry.city}</span>
+                  <span className="text-xs text-octo-gray-500">
+                    {inquiry.city}
+                  </span>
                 </div>
               </div>
             </div>
@@ -173,18 +191,24 @@ function ScanResultContent() {
             <div className="space-y-2.5 bg-octo-gray-50 rounded-xl p-3">
               <div className="flex justify-between text-xs">
                 <span className="text-octo-gray-500">Merchant ID</span>
-                <span className="text-octo-gray-800 font-medium font-mono">{inquiry.merchant_id}</span>
+                <span className="text-octo-gray-800 font-medium font-mono">
+                  {inquiry.merchant_id}
+                </span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-octo-gray-500">Terminal ID</span>
-                <span className="text-octo-gray-800 font-medium font-mono">{inquiry.terminal_id}</span>
+                <span className="text-octo-gray-800 font-medium font-mono">
+                  {inquiry.terminal_id}
+                </span>
               </div>
             </div>
           </div>
 
           {/* Amount Section */}
           <div className="bg-white rounded-2xl shadow-sm border border-octo-gray-100 p-5">
-            <h3 className="text-sm font-semibold text-octo-gray-900 mb-3">Jumlah Pembayaran</h3>
+            <h3 className="text-sm font-semibold text-octo-gray-900 mb-3">
+              Jumlah Pembayaran
+            </h3>
             {inquiry.fixed_amount === 0 ? (
               <div>
                 <div className="relative">
@@ -200,7 +224,9 @@ function ScanResultContent() {
                     className="h-14 pl-10 text-2xl font-bold text-octo-gray-900 rounded-xl border-octo-gray-200 focus:border-octo-red focus:ring-octo-red/20"
                   />
                 </div>
-                <p className="text-xs text-octo-gray-500 mt-2">Masukkan jumlah yang akan dibayar</p>
+                <p className="text-xs text-octo-gray-500 mt-2">
+                  Masukkan jumlah yang akan dibayar
+                </p>
               </div>
             ) : (
               <div className="bg-octo-gray-50 rounded-xl p-4 text-center">
@@ -216,7 +242,9 @@ function ScanResultContent() {
           <div className="bg-octo-green-light rounded-xl px-4 py-3 flex items-center gap-2.5">
             <CreditCard className="w-4 h-4 text-octo-green shrink-0" />
             <div>
-              <p className="text-xs text-octo-green font-medium">Saldo tersedia</p>
+              <p className="text-xs text-octo-green font-medium">
+                Saldo tersedia
+              </p>
               <p className="text-sm font-semibold text-octo-green">
                 {formatCurrency(session.balance)}
               </p>
@@ -246,8 +274,12 @@ function ScanResultContent() {
               <Store className="w-6 h-6 text-octo-red" />
             </div>
             <p className="text-xs text-octo-gray-600 mb-0.5">Bayar ke</p>
-            <h2 className="font-bold text-base text-octo-gray-900 mb-2">{inquiry.merchant_name}</h2>
-            <p className="text-2xl font-bold text-octo-red count-up">{formatCurrency(finalAmount)}</p>
+            <h2 className="font-bold text-base text-octo-gray-900 mb-2">
+              {inquiry.merchant_name}
+            </h2>
+            <p className="text-2xl font-bold text-octo-red count-up">
+              {formatCurrency(finalAmount)}
+            </p>
           </div>
 
           <div className="bg-white rounded-2xl shadow-sm border border-octo-gray-100 p-4">
@@ -259,10 +291,14 @@ function ScanResultContent() {
                 <div
                   key={i}
                   className={`w-9 h-9 rounded-lg border-2 flex items-center justify-center transition-all duration-200 ${
-                    pin.length > i ? "border-octo-red bg-octo-red-light" : "border-octo-gray-200"
+                    pin.length > i
+                      ? "border-octo-red bg-octo-red-light"
+                      : "border-octo-gray-200"
                   }`}
                 >
-                  {pin.length > i && <div className="w-2.5 h-2.5 bg-octo-red rounded-full" />}
+                  {pin.length > i && (
+                    <div className="w-2.5 h-2.5 bg-octo-red rounded-full" />
+                  )}
                 </div>
               ))}
             </div>
@@ -327,7 +363,9 @@ function ScanResultContent() {
             </div>
             <div className="absolute inset-0 w-20 h-20 rounded-full border-4 border-octo-red/20 pulse-ring" />
           </div>
-          <h2 className="text-lg font-semibold text-octo-gray-900 mb-2">Memproses Pembayaran</h2>
+          <h2 className="text-lg font-semibold text-octo-gray-900 mb-2">
+            Memproses Pembayaran
+          </h2>
           <p className="text-sm text-octo-gray-500 text-center">
             Mohon tunggu, pembayaran Anda sedang diproses...
           </p>
@@ -345,7 +383,9 @@ function ScanResultContent() {
             <div className="w-20 h-20 rounded-full bg-red-500 flex items-center justify-center mx-auto mb-4">
               <XCircle className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-xl font-bold text-red-600 mb-1">Pembayaran Gagal</h1>
+            <h1 className="text-xl font-bold text-red-600 mb-1">
+              Pembayaran Gagal
+            </h1>
             <p className="text-sm text-octo-gray-600">{paymentError}</p>
           </div>
           <div className="px-5 mt-4">
@@ -381,7 +421,9 @@ function ScanResultContent() {
                 <XCircle className="w-10 h-10 text-white" />
               )}
             </div>
-            <h1 className={`text-xl font-bold mb-1 ${isSuccess ? "text-octo-green" : "text-red-600"}`}>
+            <h1
+              className={`text-xl font-bold mb-1 ${isSuccess ? "text-octo-green" : "text-red-600"}`}
+            >
               {isSuccess ? "Pembayaran Berhasil!" : "Pembayaran Gagal"}
             </h1>
             <p className="text-3xl font-bold text-octo-gray-900 mt-4 count-up">
@@ -394,21 +436,38 @@ function ScanResultContent() {
           <div className="bg-white rounded-2xl shadow-sm border border-octo-gray-100 p-5 fade-in">
             <div className="flex items-center gap-2 mb-4">
               <Receipt className="w-4 h-4 text-octo-gray-400" />
-              <h3 className="text-sm font-semibold text-octo-gray-900">Detail Transaksi</h3>
+              <h3 className="text-sm font-semibold text-octo-gray-900">
+                Detail Transaksi
+              </h3>
             </div>
             <div className="space-y-3">
               {[
                 { label: "Merchant", value: inquiry.merchant_name },
-                { label: "ID Transaksi", value: paymentStatus.transaction_id, mono: true },
+                {
+                  label: "ID Transaksi",
+                  value: paymentStatus.transaction_id,
+                  mono: true,
+                },
                 { label: "Jumlah", value: formatCurrency(finalAmount) },
-                { label: "Saldo Akhir", value: formatCurrency(paymentStatus.final_balance), bold: true },
-                { label: "Waktu", value: new Date(paymentStatus.timestamp).toLocaleString("id-ID") },
+                {
+                  label: "Saldo Akhir",
+                  value: formatCurrency(paymentStatus.final_balance),
+                  bold: true,
+                },
+                {
+                  label: "Waktu",
+                  value: new Date(paymentStatus.timestamp).toLocaleString(
+                    "id-ID",
+                  ),
+                },
               ].map((item, i) => (
                 <div key={i} className="flex justify-between text-xs">
                   <span className="text-octo-gray-500">{item.label}</span>
                   <span
                     className={`text-right ${item.mono ? "font-mono" : ""} ${
-                      item.bold ? "font-bold text-octo-gray-900" : "text-octo-gray-800 font-medium"
+                      item.bold
+                        ? "font-bold text-octo-gray-900"
+                        : "text-octo-gray-800 font-medium"
                     }`}
                   >
                     {item.value}

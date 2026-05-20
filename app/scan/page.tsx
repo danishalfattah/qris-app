@@ -20,7 +20,7 @@ export default function ScanPage() {
       const encoded = encodeURIComponent(decodedText);
       router.push(`/scan/result?qr=${encoded}`);
     },
-    [router]
+    [router],
   );
 
   const handleScanError = useCallback((error: string) => {
@@ -52,7 +52,7 @@ export default function ScanPage() {
             <p className="text-white/90 text-[11px] text-center">
               QRIS can also be used in country:{" "}
               <span className="font-medium">
-                🇹🇭 Thailand  🇸🇬 Singapore  🇲🇾 Malaysia  🇯🇵 Japan
+                🇹🇭 Thailand 🇸🇬 Singapore 🇲🇾 Malaysia 🇯🇵 Japan
               </span>
             </p>
           </div>
@@ -65,12 +65,15 @@ export default function ScanPage() {
               <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <QrCode className="w-10 h-10 text-white/60" />
               </div>
-              <p className="text-white/80 text-sm mb-2">Kamera tidak tersedia</p>
+              <p className="text-white/80 text-sm mb-2">
+                Kamera tidak tersedia
+              </p>
               <p className="text-white/50 text-xs mb-6">{scanError}</p>
               <button
                 onClick={() => {
                   // Demo: navigate with mock QR data
-                  const mockQr = "00020101021226680016ID.CO.TELKOMSEL011893600898011234567802150008850012345603048888530336054041500550206150000620742035126304ABCD";
+                  const mockQr =
+                    "00020101021226680016ID.CO.TELKOMSEL011893600898011234567802150008850012345603048888530336054041500550206150000620742035126304ABCD";
                   router.push(`/scan/result?qr=${encodeURIComponent(mockQr)}`);
                 }}
                 className="bg-white/10 backdrop-blur-sm text-white px-6 py-3 rounded-xl text-sm font-medium hover:bg-white/20 transition-colors border border-white/20"
@@ -93,7 +96,8 @@ export default function ScanPage() {
           {/* DEV: Demo QR Button */}
           <button
             onClick={() => {
-              const mockQr = "00020101021226680016ID.CO.TELKOMSEL011893600898011234567802150008850012345603048888530336054041500550206150000620742035126304ABCD";
+              const mockQr =
+                "00020101021226680016ID.CO.TELKOMSEL011893600898011234567802150008850012345603048888530336054041500550206150000620742035126304ABCD";
               router.push(`/scan/result?qr=${encodeURIComponent(mockQr)}`);
             }}
             className="w-full mb-4 py-3 rounded-xl bg-octo-gold text-black text-sm font-bold active:scale-[0.97] transition-all"
@@ -107,11 +111,13 @@ export default function ScanPage() {
               onClick={() => setFlashOn(!flashOn)}
               className="flex flex-col items-center gap-1.5"
             >
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${
-                flashOn
-                  ? "bg-octo-gold text-black"
-                  : "bg-white/10 text-white border border-white/20"
-              }`}>
+              <div
+                className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${
+                  flashOn
+                    ? "bg-octo-gold text-black"
+                    : "bg-white/10 text-white border border-white/20"
+                }`}
+              >
                 <Flashlight className="w-5 h-5" />
               </div>
               <span className="text-white/70 text-[10px]">Flash</span>
@@ -121,7 +127,9 @@ export default function ScanPage() {
               <div className="w-12 h-12 rounded-full flex items-center justify-center">
                 <QrCode className="w-7 h-7 text-white" />
               </div>
-              <span className="text-white/90 text-[10px] font-medium">QRIS</span>
+              <span className="text-white/90 text-[10px] font-medium">
+                QRIS
+              </span>
             </div>
 
             <>
@@ -134,7 +142,9 @@ export default function ScanPage() {
                   const file = e.target.files?.[0];
                   if (file) {
                     const objectUrl = URL.createObjectURL(file);
-                    router.push(`/scan/result?image=${encodeURIComponent(objectUrl)}`);
+                    router.push(
+                      `/scan/result?image=${encodeURIComponent(objectUrl)}`,
+                    );
                   }
                 }}
               />
