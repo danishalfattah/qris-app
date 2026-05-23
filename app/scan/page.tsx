@@ -84,7 +84,6 @@ export default function ScanPage() {
         <ScanControls
           flashOn={flashOn}
           onToggleFlash={() => setFlashOn(!flashOn)}
-          onDemoQr={handleDemoQr}
           onImageSelected={handleImageSelected}
         />
       </div>

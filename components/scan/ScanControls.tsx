@@ -6,28 +6,18 @@ import { Flashlight, Image, QrCode } from "lucide-react";
 interface ScanControlsProps {
   flashOn: boolean;
   onToggleFlash: () => void;
-  onDemoQr: () => void;
   onImageSelected: (file: File) => void;
 }
 
 export default function ScanControls({
   flashOn,
   onToggleFlash,
-  onDemoQr,
   onImageSelected,
 }: ScanControlsProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
     <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black via-black/90 to-transparent pt-12 pb-8 px-5">
-      {/* DEV: Demo QR Button */}
-      <button
-        onClick={onDemoQr}
-        className="w-full mb-4 py-3 rounded-xl bg-octo-gold text-black text-sm font-bold active:scale-[0.97] transition-all"
-      >
-        ⚡ Demo QR — Langsung Inquiry
-      </button>
-
       {/* Action Buttons */}
       <div className="flex items-center justify-around mb-4">
         <button
