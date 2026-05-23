@@ -103,13 +103,15 @@ export async function createPayment(
 
 export async function getTransactionStatus(
   transaction_id: string,
-  _token: string
+  _token: string,
+  currentBalance: number,
+  amount: number
 ): Promise<TransactionStatusResponse> {
   await delay(80);
   return {
     transaction_id,
     status: "SUCCESS",
-    final_balance: 975000,
+    final_balance: currentBalance - amount,
     timestamp: new Date().toISOString(),
   };
 }

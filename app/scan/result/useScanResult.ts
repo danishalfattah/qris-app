@@ -76,7 +76,7 @@ export function useScanResult(
       pollingRef.current = setInterval(async () => {
         pollCount++;
         try {
-          const status = await api.getTransactionStatus(transactionId, session.token);
+          const status = await api.getTransactionStatus(transactionId, session.token, session.balance, finalAmount);
           if (status.status !== "PENDING") {
             if (pollingRef.current) clearInterval(pollingRef.current);
             if (status.status === "SUCCESS") {
