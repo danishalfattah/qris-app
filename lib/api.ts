@@ -8,31 +8,43 @@ import { parseQris } from "./qris-parser";
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-const DEMO_ACCOUNT: AuthResponse = {
-  token: "mock-jwt-token-demo",
-  account_id: "ACC-DEMO",
-  balance: 2500000,
-};
-
-const RAFLI_ACCOUNT: AuthResponse = {
-  token: "mock-jwt-token-rafli",
-  account_id: "ACC-RAFLI",
-  balance: 5000000,
+const DUMMY_ACCOUNTS: Record<string, AuthResponse> = {
+  rafli: {
+    token: "mock-jwt-token-rafli",
+    account_id: "RAFLI",
+    balance: 5000000,
+  },
+  danish: {
+    token: "mock-jwt-token-danish",
+    account_id: "DANISH",
+    balance: 3200000,
+  },
+  ivan: { token: "mock-jwt-token-ivan", account_id: "IVAN", balance: 7500000 },
+  farras: {
+    token: "mock-jwt-token-farras",
+    account_id: "FARRAS",
+    balance: 1800000,
+  },
+  nida: { token: "mock-jwt-token-nida", account_id: "NIDA", balance: 4100000 },
+  dinda: {
+    token: "mock-jwt-token-dinda",
+    account_id: "DINDA",
+    balance: 2750000,
+  },
+  anna: { token: "mock-jwt-token-anna", account_id: "ANNA", balance: 6300000 },
 };
 
 export async function login(
   username: string,
-  password: string
+  password: string,
 ): Promise<AuthResponse> {
   await delay(80);
   if (!username || !password) {
     throw new Error("Username dan password wajib diisi");
   }
-  if (username === "demo" && password === "demo1234") {
-    return DEMO_ACCOUNT;
-  }
-  if (username === "rafli" && password === "rafli1234") {
-    return RAFLI_ACCOUNT;
+  const dummy = DUMMY_ACCOUNTS[username.toLowerCase()];
+  if (dummy && password === username.toLowerCase() + "1234") {
+    return dummy;
   }
   return {
     token: "mock-jwt-token-" + username,
@@ -44,7 +56,7 @@ export async function login(
 export async function register(
   username: string,
   password: string,
-  initial_balance: number
+  initial_balance: number,
 ): Promise<AuthResponse> {
   await delay(80);
   if (!username || !password) {
@@ -62,14 +74,14 @@ export async function register(
 
 export async function inquiryByPayload(
   qris_payload: string,
-  _token: string
+  _token: string,
 ): Promise<InquiryResponse> {
   return parseQris(qris_payload);
 }
 
 export async function inquiryByImage(
   _imageFile: File,
-  _token: string
+  _token: string,
 ): Promise<InquiryResponse> {
   await delay(100);
   return {
@@ -86,7 +98,7 @@ export async function createPayment(
   inquiry_id: string,
   amount: number,
   pincode: string,
-  _token: string
+  _token: string,
 ): Promise<PaymentResponse> {
   await delay(80);
   if (pincode.length !== 6) {
@@ -107,7 +119,7 @@ export async function getTransactionStatus(
   transaction_id: string,
   _token: string,
   currentBalance: number,
-  amount: number
+  amount: number,
 ): Promise<TransactionStatusResponse> {
   await delay(80);
   return {
