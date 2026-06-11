@@ -68,10 +68,13 @@ export function parseQris(payload: string): InquiryResponse {
     ? parseTLV(additionalData).get("05") ?? "-"
     : "-";
 
+  const randomHex = (len: number) =>
+    Array.from({ length: len }, () => Math.floor(Math.random() * 16).toString(16).toUpperCase()).join("");
+
   return {
-    merchant_id: root.get("00") ?? "QRIS",
+    merchant_id: "MRC-" + randomHex(8),
     merchant_name: merchantName,
-    terminal_id: terminalId,
+    terminal_id: "TRM-" + randomHex(6),
     city,
     fixed_amount: fixedAmount,
     inquiry_id: "INQ-" + Date.now(),

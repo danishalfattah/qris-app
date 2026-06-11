@@ -14,6 +14,12 @@ const DEMO_ACCOUNT: AuthResponse = {
   balance: 2500000,
 };
 
+const RAFLI_ACCOUNT: AuthResponse = {
+  token: "mock-jwt-token-rafli",
+  account_id: "ACC-RAFLI",
+  balance: 5000000,
+};
+
 export async function login(
   username: string,
   password: string
@@ -24,6 +30,9 @@ export async function login(
   }
   if (username === "demo" && password === "demo1234") {
     return DEMO_ACCOUNT;
+  }
+  if (username === "rafli" && password === "rafli1234") {
+    return RAFLI_ACCOUNT;
   }
   return {
     token: "mock-jwt-token-" + username,
