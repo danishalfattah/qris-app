@@ -4,6 +4,7 @@ import type {
   PaymentResponse,
   TransactionStatusResponse,
 } from "./types";
+import { parseQris } from "./qris-parser";
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -54,15 +55,7 @@ export async function inquiryByPayload(
   qris_payload: string,
   _token: string
 ): Promise<InquiryResponse> {
-  await delay(80);
-  return {
-    merchant_id: "MRC001",
-    merchant_name: "Warung Makan Sederhana",
-    terminal_id: "TRM001",
-    city: "Jakarta",
-    fixed_amount: 25000,
-    inquiry_id: "INQ-" + Date.now(),
-  };
+  return parseQris(qris_payload);
 }
 
 export async function inquiryByImage(
